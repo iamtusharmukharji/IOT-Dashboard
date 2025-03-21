@@ -51,7 +51,7 @@ const MqttSensorDisplay = () => {
 
     return (
         <>
-        <h1 style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>IOT Sensor Dashboard</h1>
+        <h1 style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>Terragain Sensor Dashboard</h1>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>
             {/* Temperature Meter */}
             
@@ -91,7 +91,7 @@ const MqttSensorDisplay = () => {
             </div>
             
         </div>
-        <h6 style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop:"5%" }}>Values Updated At: {lastUpdate}</h6>
+        <h6 style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop:"5%" }}>Values Updated At: <p style={{color:"red", marginLeft:"-1%"}}>{lastUpdate}</p></h6>
         </>
     );
     
