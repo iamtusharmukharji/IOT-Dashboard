@@ -4,13 +4,13 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
 
 const MQTT_BROKER = "ws://test.mosquitto.org:8080/mqtt";
-const MQTT_TOPIC_TEMP = "esp-10504491/data/temp";
-const MQTT_TOPIC_HUMID = "esp-10504491/data/humid";
+const MQTT_TOPIC = "farm_01/data";
 const CLIENT_ID = "client_" + Math.random().toString(16).substr(2, 8);
 
 const MqttSensorDisplay = () => {
     const [temperature, setTemperature] = useState(0);
     const [humidity, setHumidity] = useState(0);
+    const [lastUpdate, setLastUpdate] = useState("Not Updated");
 
     useEffect(() => {
         const mqttClient = new Paho.Client(MQTT_BROKER, CLIENT_ID);
@@ -20,18 +20,23 @@ const MqttSensorDisplay = () => {
         };
 
         mqttClient.onMessageArrived = (message) => {
-            console.log("Message received:", message.payloadString);
-            if (message.topic === MQTT_TOPIC_HUMID) {
-                setHumidity(parseFloat(message.payloadString) || 0);
-            } else if (message.topic === MQTT_TOPIC_TEMP) {
-                setTemperature(parseFloat(message.payloadString) || 0);
-            }
+            // console.log("Message received:", message.payloadString);
+            const data = JSON.parse(message.payloadString)
+            // console.log(data)
+            
+            const date = new Date(data.timestamp);
+
+            setTemperature( data.temperature || 0);
+            setHumidity( data.humidity || 0);
+            setLastUpdate( date.toLocaleString() )
+
+            
         };
 
         mqttClient.connect({
             onSuccess: () => {
                 console.log("Connected to MQTT Broker");
-                mqttClient.subscribe([MQTT_TOPIC_HUMID, MQTT_TOPIC_TEMP]);
+                mqttClient.subscribe(MQTT_TOPIC);
             },
             onFailure: (error) => {
                 console.error("Connection failed:", error.errorMessage);
@@ -84,7 +89,9 @@ const MqttSensorDisplay = () => {
                     Humidity
                 </p>
             </div>
+            
         </div>
+        <h6 style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginTop:"5%" }}>Values Updated At: {lastUpdate}</h6>
         </>
     );
     
